@@ -1,8 +1,27 @@
 const express = require('express');
+const authenticator = require('./middlewares/authenticator');
+const mailer = require('./middlewares/emailjob');
 const app = express(); //create express application
 const PORT = 5000;
 
-app.use(express.json());
+app.use(express.json()); //this one also middleware 
+
+/*
+//Middleware function write in same app.js
+app.use((req,res,next)=>{
+    console.log('Authenticating User...');
+    next();
+});
+
+app.use((req,res,next)=>{
+    console.log('Sending email to User...');
+    next();
+});
+*/
+ 
+//Middleware function in other folder
+app.use(authenticator);
+app.use(mailer);
 
 let heroesArray = [
     {
