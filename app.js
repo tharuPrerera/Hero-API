@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const heroes = require('./routes/heroes');
 const home = require('./routes/homes');
 const authenticator = require('./middlewares/authenticator');
@@ -29,9 +30,52 @@ app.use(mailer);
 app.use('/api/heroes', heroes);
 app.use('/', home);
 
+//mongoose connection string 
+mongoose
+    .connect("mongodb://localhost/herodb",{useNewUrlParser: true , useUnifiedTopology: true })
+    .then(()=>console.log("Connected to DB successfully.."))
+    .catch(err => console.log("Error has occured while connecting to db : ",err));
+    
+
+//mongoose connection using async await 
+   /* mongoose.Promise = Promise
+
+    mongoose.connection.on('connected', () => {
+      console.log('Connection Established')
+    })
+    
+    mongoose.connection.on('reconnected', () => {
+      console.log('Connection Reestablished')
+    })
+    
+    mongoose.connection.on('disconnected', () => {
+      console.log('Connection Disconnected')
+    })
+    
+    mongoose.connection.on('close', () => {
+      console.log('Connection Closed')
+    })
+    
+    mongoose.connection.on('error', (error) => {
+      console.log('ERROR: ' + error)
+    })
+    
+    const run = async () => {
+      await mongoose.connect('mongodb://localhost/herodb', {
+        autoReconnect: true,
+        reconnectTries: 1000000,
+        reconnectInterval: 3000
+      })
+    }
+    
+    run().catch(error => console.error(error))*/
+
+    
 app.listen(PORT,function(){
     console.log("Listening on Port : "+ PORT)
 });
+
+
 
 /*
 //hard code
