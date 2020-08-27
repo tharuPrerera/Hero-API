@@ -119,10 +119,26 @@ router.post('/', async (req,res) =>{
    
 });
 
-router.put('/:heroId',async(req,res)=>{
 
-    //quarying and update
+//one way to update data
+/*
+router.put('/:heroId',async(req,res)=>{
+    //quarying first approache
     let hero = await Hero.findById(req.params.heroId);
+
+    if(!hero){
+        return res.status(404).send("The given ID does not exist on our server")
+     }
+ 
+     if(!req.body.heroName){
+     return res.status(404).send("Not all mandatory value have been set!");
+     }
+ 
+    
+    hero.set({name: req.body.heroName});
+    hero = await hero.save();
+    res.send(hero);
+
 
     //using same page array...
         //let heroId = parseInt(req.params.heroId); //rquest paramiter is url
@@ -133,22 +149,32 @@ router.put('/:heroId',async(req,res)=>{
        // console.log(heroesArray);
        // res.send(hero);
 
-    if(!hero){
-       return res.status(404).send("The given ID does not exist on our server")
-    }
-
-    if(!req.body.heroName){
-    return res.status(404).send("Not all mandatory value have been set!");
-    }
-
    
-   hero.set({name: req.body.heroName});
-   hero = await hero.save();
+});
+*/
+ 
+//other way to update data
+router.put('/:heroId',async(req,res)=>{
+   let hero = await Hero.findOneAndUpdate(
+        {_id: req.params.heroId},
+        {$set: {likeCount: req.body.likeCount}},
+        {new: true, useFindAndModify: false}
+    ); 
     res.send(hero);
 });
 
-router.delete('/:heroId',(req,res)=>{
-    let heroId = parseInt(req.params.heroId); //rquest paramiter is url
+
+router.delete('/:heroId',async(req,res)=>{
+  
+  let hero = await Hero.findOneAndDelete({_id: req.params.heroId});
+  if(!hero){
+    return res.status(404).send("The given ID does not exist on our server");
+  }
+
+  res.send(hero);
+  
+  
+  /*  let heroId = parseInt(req.params.heroId); //rquest paramiter is url
     let hero =heroesArray.find(h => h.id === heroId);
     
     if(!hero){
@@ -158,7 +184,7 @@ router.delete('/:heroId',(req,res)=>{
     let indexOfHero = heroesArray.indexOf(hero);
     heroesArray.splice(indexOfHero,1);
     console.log(heroesArray);
-    res.send(hero);
+    res.send(hero);*/
 });
 
 module.exports = router;
